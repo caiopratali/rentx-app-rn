@@ -4,15 +4,13 @@ import styled from "styled-components/native";
 export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.header};
-  padding-top: 96px;
+  padding-top: 56px;
 `;
 
 export const Content = styled.View`
-  flex: 1;
   justify-content: center;
   align-items: center;
-  padding-top: 50px;
-  padding-bottom: 80px;
+  margin-top: -60px;
 `;
 
 export const Title = styled.Text`
@@ -34,6 +32,6 @@ export const Message = styled.Text`
 export const Footer = styled.View`
   width: 100%;
   align-items: center;
-  padding: 80px 0;
+  padding: 40px 0;
 `;
 

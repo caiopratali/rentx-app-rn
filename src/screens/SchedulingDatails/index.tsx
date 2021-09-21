@@ -56,7 +56,8 @@ interface RentalPeriod {
 }
 
 export function SchedulingDatails() {
-  const [ rentalPeriod, setRentalPeriod ] = useState<RentalPeriod>( {} as RentalPeriod );
+  const [loading, setLoading] = useState(false);
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>( {} as RentalPeriod );
 
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -66,6 +67,8 @@ export function SchedulingDatails() {
   const rentTotal = Number(dates.length * car.rent.price);
 
   async function handleSchedulingComplete() {
+    setLoading(true)
+
     const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
 
     const unavailable_dates = [
@@ -73,13 +76,21 @@ export function SchedulingDatails() {
       ...dates
     ]
 
-    console.log(car.id)
+    await api.post('schedules_byuser', {
+      user_id: 1,
+      car,
+      startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      endDate: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
+    })
 
     api.put(`/schedules_bycars/${car.id}`, {
       id: car.id,
       unavailable_dates
     }).then(() => navigation.navigate('SchedulingComplete'))
-    .catch(() => Alert.alert('Não foi possível confirmar o agendamento'))
+    .catch(() => {
+      setLoading(false)
+      Alert.alert('Não foi possível confirmar o agendamento')
+    })
     
   }
 
@@ -143,7 +154,13 @@ export function SchedulingDatails() {
         </RentalPrice>
       </Content>
       <Footer>
-        <Button title="Alugar agora" color={colors.success} onPress={handleSchedulingComplete} />
+        <Button 
+          title="Alugar agora" 
+          color={colors.success} 
+          onPress={handleSchedulingComplete} 
+          loading={loading} 
+          enabled={!loading}
+        />
       </Footer>
     </Container>
   );
