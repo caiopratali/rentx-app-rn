@@ -8,13 +8,14 @@ import { SchedulingDatails } from '../screens/SchedulingDatails';
 import { SchedulingComplete } from '../screens/SchedulingComplete';
 import { MyCars } from '../screens/MyCars';
 import { Splash } from '../screens/Splash';
+import { SignIn } from '../screens/SignIn';
 
 const { Navigator, Screen } = createStackNavigator();
 
 export function StackRoutes() {
   return (
-    <Navigator headerMode="none" initialRouteName="Splash">
-      <Screen name="Splash" component={Splash} />
+    <Navigator headerMode="none" initialRouteName="SignIn">
+      <Screen name="SignIn" component={SignIn} />
       <Screen name="Home" component={Home} options={{ gestureEnabled: false }} />
       <Screen name="CarDatails" component={CarDatails} />
       <Screen name="Scheduling" component={Scheduling} />
