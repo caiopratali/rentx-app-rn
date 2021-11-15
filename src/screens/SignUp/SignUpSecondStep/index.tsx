@@ -29,7 +29,7 @@ export const SignUpSecondStep: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const route = useRoute();
 
   const { user } = route.params as Params;
@@ -43,6 +43,12 @@ export const SignUpSecondStep: React.FC = () => {
   const handleRegister = () => {
     if (!password) return Alert.alert('Senha obrigatória');
     if (password !== confirmPassword) return Alert.alert('As senhas estão iguais');
+
+    navigate('Confirmation', { 
+      title: 'Conta criada!', 
+      message: 'Agora é só fazer login\ne aproveitar', 
+      nextScreenRoute: 'SignIn'
+    });
   }
 
   return (
