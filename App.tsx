@@ -5,6 +5,7 @@ import { Archivo_400Regular, Archivo_500Medium, Archivo_600SemiBold } from '@exp
 import AppLoading from 'expo-app-loading';
 
 import { Routes } from './src/routes';
+import { AppProvider } from './src/hooks';
 
 import theme from './src/styles/theme';
 
@@ -23,8 +24,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Routes />
+      <AppProvider>
+        <Routes />
+      </AppProvider>
     </ThemeProvider>
-
   )
 }

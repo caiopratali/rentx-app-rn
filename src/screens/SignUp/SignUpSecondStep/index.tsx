@@ -7,6 +7,7 @@ import { PasswordInput } from '../../../components/PasswordInput';
 import { BackButton } from '../../../components/BackButton';
 import { Bullet } from '../../../components/Bullet';
 import { Button } from '../../../components/Button';
+import { api } from '../../../services/api';
 import {
   Container,
   Header,
@@ -40,15 +41,24 @@ export const SignUpSecondStep: React.FC = () => {
     goBack();
   }
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!password) return Alert.alert('Senha obrigatória');
     if (password !== confirmPassword) return Alert.alert('As senhas estão iguais');
 
-    navigate('Confirmation', { 
-      title: 'Conta criada!', 
-      message: 'Agora é só fazer login\ne aproveitar', 
-      nextScreenRoute: 'SignIn'
-    });
+    await api.post('/users', {
+      name: user.name,
+      email: user.email,
+      password,
+      driver_license: user.driverLicense
+    }).then(() => {
+      navigate('Confirmation', { 
+        title: 'Conta criada!', 
+        message: 'Agora é só fazer login\ne aproveitar', 
+        nextScreenRoute: 'SignIn'
+      });
+    }).catch(() => {
+      Alert.alert('Opa', 'Não foi possível realizar o cadastro')
+    }); 
   }
 
   return (
