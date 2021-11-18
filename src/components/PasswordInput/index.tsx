@@ -45,7 +45,7 @@ export const PasswordInput: React.FC<Props> = ({ iconName, value, ...rest }) => 
           color={(isFocused || isFilled) ? theme.colors.main : theme.colors.text_details}
         />
       </IconContainer>
-      <InputText secureTextEntry={isPasswordVisible} onFocus={handleInputFocus} onBlur={handleInputBlur} isFocused={isFocused} {...rest} />
+      <InputText secureTextEntry={isPasswordVisible} onFocus={handleInputFocus} onBlur={handleInputBlur} isFocused={isFocused} autoCorrect={false} {...rest} />
       <BorderlessButton onPress={handlePasswordVisibilityChange}>
         <IconContainer isFocused={isFocused}>
         <Feather 
