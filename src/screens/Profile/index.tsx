@@ -11,6 +11,7 @@ import { BackButton } from '../../components/BackButton';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { PasswordInput } from '../../components/PasswordInput';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { useAuth } from '../../hooks/auth';
 
 import {
@@ -31,6 +32,7 @@ import {
 
 export const Profile: React.FC = () => {
   const { user, signOut, updatedUser } = useAuth();
+  const netInfo = useNetInfo();
 
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit');
   const [avatar, setAvatar] = useState(user.avatar);
@@ -48,6 +50,10 @@ export const Profile: React.FC = () => {
   }
 
   const handleOptionsChange = (optionSelected: 'dataEdit' | 'passwordEdit') => {
+    if(netInfo.isConnected === false && optionSelected === 'passwordEdit') {
+      return Alert.alert('Verifique sua conexão', 'Para alterar a senha, conecte-se a internet');
+    }
+      
     setOption(optionSelected);
   }
 
