@@ -42,7 +42,7 @@ export const PhotoContainer = styled.View`
   height: 180px;
   border-radius: 90px;
   margin-top: 48px;
-  background-color: ${({ theme }) => theme.colors.shape};
+  background-color: ${({ theme }) => theme.colors.main_light};
 `;
 
 export const Photo = styled.Image`

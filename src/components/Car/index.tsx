@@ -13,12 +13,11 @@ import {
 } from "./styles";
 
 import { RectButtonProps } from "react-native-gesture-handler";
-import { CarDTO } from "../../dtos/CarDTO";
+import { Car as CarModel } from "../../database/model/Car";
 import { getAccessoryIcon } from "../../utils/getAccessoryIcon";
 
-
 interface CarProps extends RectButtonProps {
-  data: CarDTO;
+  data: CarModel;
 }
 
 export function Car({ data, ...rest }: CarProps) {

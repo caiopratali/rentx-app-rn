@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components';
 import { Feather } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import * as ImagePicker from 'expo-image-picker';
+import * as Yup from 'yup';
 
 import { BackButton } from '../../components/BackButton';
 import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
 import { PasswordInput } from '../../components/PasswordInput';
 import { useAuth } from '../../hooks/auth';
 
@@ -27,25 +30,74 @@ import {
 } from './styles';
 
 export const Profile: React.FC = () => {
+  const { user, signOut, updatedUser } = useAuth();
+
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit');
+  const [avatar, setAvatar] = useState(user.avatar);
+  const [name, setName] = useState(user.name);
+  const [driverLicense, setDriverLicense] = useState(user.driver_license);
 
   const isDataEdit = option === 'dataEdit';
   const isPasswordEdit = option === 'passwordEdit';
 
   const theme = useTheme();
   const navigation = useNavigation();
-  const { user } = useAuth();
 
   const handleBack = () => {
     navigation.goBack();
   }
 
-  const handleSignOut = () => {
-
-  }
-
   const handleOptionsChange = (optionSelected: 'dataEdit' | 'passwordEdit') => {
     setOption(optionSelected);
+  }
+
+  const handleAvatarSelect = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1
+    });
+
+    if(result.cancelled) return;
+
+    if(result.uri) setAvatar(result.uri);
+  }
+
+  const handleProfileUpdate = async () => {
+    try {
+      const schema = Yup.object().shape({
+        driverLicense: Yup.string().required('CNH é obrigatória'),
+        name: Yup.string().required('Nome é obrigatória')
+      });
+
+      await schema.validate({ driverLicense, name });
+
+      await updatedUser({...user, name, driver_license: driverLicense, avatar});
+
+      Alert.alert('Perfil atualizado com sucesso!');
+    } catch (error) {
+      if(error instanceof Yup.ValidationError) Alert.alert('Ops', error.message);
+
+      Alert.alert('Não foi possivel atualizar o perfil.');
+    }
+  }
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Tem certeza?', 
+      'Se você sair, será necessário uma conexão com a internet para se conectar.',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {}
+        },
+        {
+          text: '',
+          onPress: () => signOut()
+        }
+      ]
+    );
   }
 
   return (
@@ -61,8 +113,8 @@ export const Profile: React.FC = () => {
               </LogoutButton>
             </HeaderTop>
             <PhotoContainer>
-              <Photo source={{ uri: 'https://github.com/caiopratali.png' }} />
-              <PhotoButton onPress={() => {}}>
+              { !!avatar && <Photo source={{ uri: avatar }} /> }
+              <PhotoButton onPress={handleAvatarSelect}>
                 <Feather name="camera" size={24} color={theme.colors.shape} />
               </PhotoButton>
             </PhotoContainer>
@@ -84,6 +136,7 @@ export const Profile: React.FC = () => {
                   iconName="user"
                   placeholder="Nome"
                   autoCorrect={false}
+                  onChangeText={setName}
                 />
                 <Input 
                   defaultValue={user.email}
@@ -95,6 +148,7 @@ export const Profile: React.FC = () => {
                   iconName="credit-card"
                   placeholder="CNH"
                   keyboardType="numeric"
+                  onChangeText={setDriverLicense}
                 />
               </Section>
             }
@@ -115,6 +169,7 @@ export const Profile: React.FC = () => {
                 />
               </Section>
             }
+            <Button title="Salvar alterações" onPress={handleProfileUpdate} />
           </Content>
         </Container>
       </TouchableWithoutFeedback>
